@@ -1,7 +1,7 @@
 const { predict, getCoordinates, getModelStatus, train } = require("./grpc");
 
 // get references to the canvas and context
-const canvas = document.getElementById("thecanvas");
+const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
 
 // style the context
@@ -16,10 +16,8 @@ let offsetY = canvasOffset.top;
 
 let rects = [];
 
-// this flage is true when the user is dragging the mouse
 let isDown = false;
 
-// these vars will hold the starting mouse position
 let startX;
 let startY;
 
@@ -28,17 +26,13 @@ let x2 = null;
 let y1 = null;
 let y2 = null;
 
-let modelStatus = null;
-
 function handleMouseDown(e) {
   e.preventDefault();
   e.stopPropagation();
 
-  // save the starting x/y of the rectangle
   startX = parseInt(e.clientX - offsetX);
   startY = parseInt(e.clientY - offsetY);
 
-  // set a flag indicating the drag has begun
   isDown = true;
 }
 
@@ -55,7 +49,6 @@ function handleMouseUp(e) {
     });
   }
 
-  // the drag is over, clear the dragging flag
   isDown = false;
 }
 
@@ -84,13 +77,7 @@ function handleMouseMove(e) {
 
   // clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  rects.forEach((r) => {
-    if (r.isPredicted) {
-      ctx.strokeStyle = "red";
-    }
-    ctx.strokeRect(r.lat, r.long, r.width, r.height);
-  });
+  render();
 
   // calculate the rectangle width/height based
   // on starting vs current mouse position
@@ -125,21 +112,23 @@ getModelStatus().then((data) => {
 });
 
 document
-  .getElementById("thecanvas")
+  .getElementById("mainCanvas")
   .addEventListener("mousedown", function (e) {
     handleMouseDown(e);
   });
 document
-  .getElementById("thecanvas")
+  .getElementById("mainCanvas")
   .addEventListener("mousemove", function (e) {
     handleMouseMove(e);
   });
-document.getElementById("thecanvas").addEventListener("mouseup", function (e) {
+document.getElementById("mainCanvas").addEventListener("mouseup", function (e) {
   handleMouseUp(e);
 });
-document.getElementById("thecanvas").addEventListener("mouseout", function (e) {
-  handleMouseOut(e);
-});
+document
+  .getElementById("mainCanvas")
+  .addEventListener("mouseout", function (e) {
+    handleMouseOut(e);
+  });
 
 document
   .getElementById("saveRects")
@@ -160,10 +149,6 @@ document.getElementById("clearRects").addEventListener("click", function (e) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   rects = [];
 });
-
-document.getElementById("thecanvas").onload = () => {
-  getCoordinates();
-};
 
 const render = () => {
   rects.forEach((r) => {
