@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+website/commands_grpc_web_pb.js
+website/commands_pb.js

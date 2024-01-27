@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package commands;
+
+service Commands {
+  rpc Predict (InputCoordinates) returns (CommandPredictResponse) {}
+  rpc GetCoordinates (GetCoordinatesRequest) returns (InputCoordinates) {}
+  rpc GetModelStatus (GetModelStatusRequest) returns (GetModelStatusResponse) {}
+  rpc Train (InputCoordinates) returns (TrainResult) {}
+}
+
+message Coordinate {
+  int32 lat = 1;
+  int32 long = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+ 
+message GetCoordinatesRequest {} 
+
+message InputCoordinates {
+  repeated Coordinate coordinates = 1;
+}
+
+message CommandPredictResponse {
+  Coordinate predictedCoordinate = 1;
+}
+
+message GetModelStatusRequest {
+  string token = 1;
+}
+
+message GetModelStatusResponse {
+  string status = 1;
+}
+
+message TrainResult {
+  bool success = 1;
+}
